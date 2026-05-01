@@ -5,6 +5,18 @@
 
 gsap.registerPlugin(ScrollTrigger);
 
+// ── 0. FIREBASE INITIALIZATION ───────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyB0no1vE-HZIhQlIRjyfyWXZ_1r23ECd1c",
+  authDomain: "zoro-ai-3417b.firebaseapp.com",
+  projectId: "zoro-ai-3417b",
+  storageBucket: "zoro-ai-3417b.firebasestorage.app",
+  messagingSenderId: "261396836659",
+  appId: "1:261396836659:web:c39ce50f64130d1ea1ce46"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 // ── 1. CURSOR ────────────────────────────────
 const cursor = document.getElementById('cursor');
 const ring   = document.getElementById('cursor-ring');
@@ -533,8 +545,24 @@ window.addEventListener('beforeunload', () => {
     submitLabel.textContent = 'Locking you in...';
     submitBtn.disabled = true;
 
-    // Simulate async submit
-    setTimeout(() => showSuccess(name), 900);
+    // Save to Firebase Firestore
+    db.collection("early_access").add({
+      email: email,
+      name: name,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      source: 'landing_page'
+    })
+    .then(() => {
+      showSuccess(name);
+    })
+    .catch((error) => {
+      console.error("Error adding to waitlist: ", error);
+      submitLabel.textContent = 'Error. Try again?';
+      submitBtn.disabled = false;
+      
+      // Shake the button on error
+      gsap.fromTo(submitBtn, { x: -4 }, { x: 4, duration: 0.1, repeat: 5, yoyo: true });
+    });
   });
 
   // Cursor hover effects for modal elements
