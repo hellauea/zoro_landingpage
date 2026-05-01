@@ -199,30 +199,30 @@ tl.to(scrollState, {
   duration: 0.12
 }, 0);
 
-// Segment 0.12→0.28: Dive forward (Feature 1)
+// Segment 0.12→0.28: Dive forward (Feature 1 - Personality: Text on Left)
 tl.to(scrollState, {
-  posX: -1.8,
+  posX: 3.2,
   posY: -0.3,
   posZ: 1.2,
   rotX: 0.2,
   rotY: Math.PI * 0.7,
   rotZ: -0.1,
-  scale: 0.9,
+  scale: 0.85,
   cameraZ: 7.2,
   cameraY: -0.2,
   particleOpacity: 0.7,
   duration: 0.16
 }, 0.12);
 
-// Segment 0.28→0.44: Sweep right (Feature 2)
+// Segment 0.28→0.44: Sweep right (Feature 2 - Memory: Text on Right)
 tl.to(scrollState, {
-  posX: 2.2,
+  posX: -3.2,
   posY: -1.0,
   posZ: 0.5,
   rotX: -0.15,
   rotY: Math.PI * 1.2,
   rotZ: 0.15,
-  scale: 0.85,
+  scale: 0.8,
   cameraZ: 7.5,
   cameraY: -0.8,
   particleOpacity: 0.9,
@@ -230,15 +230,15 @@ tl.to(scrollState, {
   duration: 0.16
 }, 0.28);
 
-// Segment 0.44→0.60: Dive deep left (Feature 3)
+// Segment 0.44→0.60: Dive deep left (Feature 3 - Multimodal: Text on Left)
 tl.to(scrollState, {
-  posX: -2.0,
+  posX: 3.5,
   posY: -2.2,
   posZ: -0.5,
   rotX: 0.3,
   rotY: Math.PI * 1.9,
   rotZ: -0.2,
-  scale: 0.8,
+  scale: 0.75,
   cameraZ: 8.5,
   cameraY: -1.8,
   particleOpacity: 1.0,
@@ -246,15 +246,15 @@ tl.to(scrollState, {
   duration: 0.16
 }, 0.44);
 
-// Segment 0.60→0.76: Rise right (Feature 4)
+// Segment 0.60→0.76: Rise right (Feature 4 - Platform: Text on Right)
 tl.to(scrollState, {
-  posX: 2.5,
+  posX: -3.5,
   posY: -3.5,
   posZ: 0.8,
   rotX: -0.1,
   rotY: Math.PI * 2.6,
   rotZ: 0.1,
-  scale: 0.78,
+  scale: 0.75,
   cameraZ: 8.0,
   cameraY: -3.0,
   particleOpacity: 0.8,
