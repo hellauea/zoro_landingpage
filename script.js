@@ -1,11 +1,13 @@
 /* ═══════════════════════════════════════════════
-   ZORO AI — Cinematic WebGL Scroll Experience
-   Three.js r128 · GSAP 3 ScrollTrigger
+   ZORO AI — Cinematic Script v2.0
+   Three.js r128 · GSAP 3.12 · ScrollTrigger
 ═══════════════════════════════════════════════ */
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ── 0. FIREBASE INITIALIZATION ───────────────
+/* ═══════════════════════════════════════════════
+   0. FIREBASE
+═══════════════════════════════════════════════ */
 const firebaseConfig = {
   apiKey: "AIzaSyB0no1vE-HZIhQlIRjyfyWXZ_1r23ECd1c",
   authDomain: "zoro-ai-3417b.firebaseapp.com",
@@ -17,564 +19,574 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ── 1. CURSOR ────────────────────────────────
+/* ═══════════════════════════════════════════════
+   1. CUSTOM CURSOR
+═══════════════════════════════════════════════ */
 const cursor = document.getElementById('cursor');
 const ring   = document.getElementById('cursor-ring');
-let mx = 0, my = 0, rx = 0, ry = 0;
+let mx = window.innerWidth / 2,
+    my = window.innerHeight / 2,
+    rx = mx, ry = my;
 
 document.addEventListener('mousemove', e => {
   mx = e.clientX; my = e.clientY;
   cursor.style.left = mx + 'px';
   cursor.style.top  = my + 'px';
 });
-function animateCursor() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
+
+(function tickCursor() {
+  rx += (mx - rx) * 0.11;
+  ry += (my - ry) * 0.11;
   ring.style.left = rx + 'px';
   ring.style.top  = ry + 'px';
-  requestAnimationFrame(animateCursor);
-}
-animateCursor();
+  requestAnimationFrame(tickCursor);
+})();
 
-document.querySelectorAll('a, button').forEach(el => {
+// Scale cursor on hoverable elements
+document.querySelectorAll('a, button, input').forEach(el => {
   el.addEventListener('mouseenter', () => {
-    cursor.style.width = '16px'; cursor.style.height = '16px';
-    ring.style.width = '54px'; ring.style.height = '54px';
+    gsap.to(cursor, { width: 14, height: 14, duration: 0.25, ease: 'power2.out' });
+    gsap.to(ring,   { width: 52, height: 52, borderColor: 'rgba(126,232,162,0.7)', duration: 0.3, ease: 'power2.out' });
   });
   el.addEventListener('mouseleave', () => {
-    cursor.style.width = '10px'; cursor.style.height = '10px';
-    ring.style.width = '36px'; ring.style.height = '36px';
+    gsap.to(cursor, { width: 8, height: 8, duration: 0.25, ease: 'power2.out' });
+    gsap.to(ring,   { width: 34, height: 34, borderColor: 'rgba(126,232,162,0.4)', duration: 0.3, ease: 'power2.out' });
   });
 });
 
-// ── 2. PROGRESS BAR ──────────────────────────
+/* ═══════════════════════════════════════════════
+   2. PROGRESS BAR
+═══════════════════════════════════════════════ */
 const progressBar = document.getElementById('progress-bar');
 window.addEventListener('scroll', () => {
   const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
   progressBar.style.width = Math.min(pct, 100) + '%';
-});
+}, { passive: true });
 
-// ── 3. THREE.JS SCENE ────────────────────────
-const canvas = document.getElementById('webgl-canvas');
-const renderer = new THREE.WebGLRenderer({
-  canvas, antialias: true, alpha: true, powerPreference: 'high-performance'
-});
+/* ═══════════════════════════════════════════════
+   3. THREE.JS SCENE
+═══════════════════════════════════════════════ */
+const canvas   = document.getElementById('webgl-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.1;
+renderer.toneMapping         = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
+renderer.shadowMap.enabled   = true;
+renderer.shadowMap.type      = THREE.PCFSoftShadowMap;
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 200);
-camera.position.set(0, 0, 8);
+const scene  = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 300);
+camera.position.set(0, 0, 9);
 
-// ── Resize ──
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-});
+}, { passive: true });
 
-// ── Lights ──
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.15);
-scene.add(ambientLight);
+/* ── LIGHTS ── */
+scene.add(new THREE.AmbientLight(0xffffff, 0.12));
 
-const keyLight = new THREE.DirectionalLight(0x7EE8A2, 3.5);
-keyLight.position.set(5, 8, 5);
+const keyLight = new THREE.DirectionalLight(0x7EE8A2, 4.0);
+keyLight.position.set(5, 9, 6);
 keyLight.castShadow = true;
 scene.add(keyLight);
 
-const fillLight = new THREE.DirectionalLight(0x5BC0F8, 1.8);
-fillLight.position.set(-6, -2, 3);
+const fillLight = new THREE.DirectionalLight(0x5BC0F8, 2.0);
+fillLight.position.set(-7, -3, 4);
 scene.add(fillLight);
 
-const rimLight = new THREE.DirectionalLight(0xF7B731, 1.2);
-rimLight.position.set(0, -5, -4);
+const rimLight = new THREE.DirectionalLight(0xF7B731, 1.4);
+rimLight.position.set(2, -6, -5);
 scene.add(rimLight);
 
-const pointGlow = new THREE.PointLight(0x7EE8A2, 2.5, 12);
-pointGlow.position.set(0, 2, 4);
+const pointGlow = new THREE.PointLight(0x7EE8A2, 3.0, 15);
+pointGlow.position.set(0, 2, 5);
 scene.add(pointGlow);
 
-// ── Procedural 3D Model (AI Brain / Orb) ──
+const pointGlow2 = new THREE.PointLight(0x5BC0F8, 1.5, 10);
+pointGlow2.position.set(-4, -2, 3);
+scene.add(pointGlow2);
+
+/* ── 3D ORB GROUP ── */
 const group = new THREE.Group();
 scene.add(group);
 
-// Core sphere
-const coreGeo = new THREE.IcosahedronGeometry(1.4, 4);
+// Core – icosahedron, near-mirror metallic
+const coreGeo = new THREE.IcosahedronGeometry(1.45, 4);
 const coreMat = new THREE.MeshStandardMaterial({
-  color: 0x0a0a12,
-  roughness: 0.05,
-  metalness: 0.95,
-  envMapIntensity: 1.2,
+  color: 0x080812,
+  roughness: 0.04,
+  metalness: 0.98,
 });
-const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-group.add(coreMesh);
+group.add(new THREE.Mesh(coreGeo, coreMat));
 
-// Wireframe shell
-const wireGeo = new THREE.IcosahedronGeometry(1.55, 1);
-const wireMat = new THREE.MeshBasicMaterial({
-  color: 0x7EE8A2,
-  wireframe: true,
+// Mid shell – slightly larger, translucent tinted
+const midGeo = new THREE.IcosahedronGeometry(1.58, 4);
+const midMat = new THREE.MeshStandardMaterial({
+  color: 0x0f2218,
+  roughness: 0.15,
+  metalness: 0.6,
   transparent: true,
-  opacity: 0.08,
+  opacity: 0.35,
 });
-const wireMesh = new THREE.Mesh(wireGeo, wireMat);
-group.add(wireMesh);
+group.add(new THREE.Mesh(midGeo, midMat));
 
-// Outer glow shell
-const glowGeo = new THREE.SphereGeometry(1.75, 32, 32);
+// Wireframe cage
+const wireGeo = new THREE.IcosahedronGeometry(1.62, 1);
+const wireMat = new THREE.MeshBasicMaterial({ color: 0x7EE8A2, wireframe: true, transparent: true, opacity: 0.07 });
+group.add(new THREE.Mesh(wireGeo, wireMat));
+
+// Glow back shell
+const glowGeo = new THREE.SphereGeometry(1.85, 32, 32);
 const glowMat = new THREE.MeshStandardMaterial({
-  color: 0x7EE8A2,
-  roughness: 1,
-  metalness: 0,
-  transparent: true,
-  opacity: 0.04,
-  side: THREE.BackSide,
+  color: 0x7EE8A2, roughness: 1, transparent: true, opacity: 0.035, side: THREE.BackSide,
 });
 group.add(new THREE.Mesh(glowGeo, glowMat));
 
 // Orbital rings
-function makeRing(radius, tube, color, rx, ry, rz) {
-  const geo = new THREE.TorusGeometry(radius, tube, 6, 80);
-  const mat = new THREE.MeshStandardMaterial({
-    color, roughness: 0.1, metalness: 0.9, transparent: true, opacity: 0.6,
-  });
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.rotation.set(rx, ry, rz);
-  return mesh;
+function makeRing(r, tube, color, rx, ry, rz) {
+  const m = new THREE.Mesh(
+    new THREE.TorusGeometry(r, tube, 8, 90),
+    new THREE.MeshStandardMaterial({ color, roughness: 0.05, metalness: 0.95, transparent: true, opacity: 0.55 })
+  );
+  m.rotation.set(rx, ry, rz);
+  return m;
 }
-
-const ring1 = makeRing(2.1, 0.012, 0x7EE8A2, Math.PI/2, 0, 0);
-const ring2 = makeRing(2.3, 0.008, 0x5BC0F8, Math.PI/4, Math.PI/6, 0);
-const ring3 = makeRing(2.5, 0.006, 0xF7B731, -Math.PI/3, Math.PI/3, Math.PI/5);
+const ring1 = makeRing(2.15, 0.013, 0x7EE8A2, Math.PI/2, 0, 0);
+const ring2 = makeRing(2.35, 0.009, 0x5BC0F8, Math.PI/4, Math.PI/6, 0);
+const ring3 = makeRing(2.55, 0.007, 0xF7B731, -Math.PI/3, Math.PI/3, Math.PI/5);
 group.add(ring1, ring2, ring3);
 
-// Floating particles (Stars)
-const particleCount = 400;
-const particleGeo = new THREE.BufferGeometry();
-const positions = new Float32Array(particleCount * 3);
-const pSizes = new Float32Array(particleCount);
-for (let i = 0; i < particleCount; i++) {
+// Stars / particles — spread further than before
+const N = 500;
+const starGeo = new THREE.BufferGeometry();
+const starPos = new Float32Array(N * 3);
+for (let i = 0; i < N; i++) {
   const theta = Math.random() * Math.PI * 2;
-  const phi = Math.acos(2 * Math.random() - 1);
-  const r = 2 + Math.random() * 15;
-  positions[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
-  positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-  positions[i * 3 + 2] = r * Math.cos(phi);
-  pSizes[i] = Math.random() * 1.5 + 0.5;
+  const phi   = Math.acos(2 * Math.random() - 1);
+  const r     = 3.5 + Math.random() * 18;
+  starPos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+  starPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+  starPos[i*3+2] = r * Math.cos(phi);
 }
-particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-particleGeo.setAttribute('size', new THREE.BufferAttribute(pSizes, 1));
-const particleMat = new THREE.PointsMaterial({
-  color: 0xffffff, size: 0.02, transparent: true, opacity: 0.4, sizeAttenuation: true,
-});
-const particles = new THREE.Points(particleGeo, particleMat);
-group.add(particles);
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.025, transparent: true, opacity: 0.35, sizeAttenuation: true });
+group.add(new THREE.Points(starGeo, starMat));
 
-// ── Mouse parallax ──
-let mouseNX = 0, mouseNY = 0;
-document.addEventListener('mousemove', e => {
-  mouseNX = (e.clientX / window.innerWidth - 0.5) * 2;
-  mouseNY = (e.clientY / window.innerHeight - 0.5) * 2;
-});
-
-// ── 4. SCROLL ANIMATION STATE ─────────────────
-const scrollState = {
+/* ═══════════════════════════════════════════════
+   4. SCROLL STATE + GSAP TIMELINE
+═══════════════════════════════════════════════ */
+const S = {
   posX: 0, posY: 0, posZ: 0,
   rotX: 0, rotY: 0, rotZ: 0,
   scale: 1,
-  cameraZ: 8,
-  cameraY: 0,
-  particleOpacity: 0.5,
-  glowOpacity: 0.04,
+  camZ: 9, camY: 0,
+  starOpacity: 0.35,
+  glowOpacity: 0.035,
 };
 
-const tl = gsap.timeline({
+const masterTL = gsap.timeline({
   scrollTrigger: {
     trigger: '#scroll-container',
     start: 'top top',
     end: 'bottom bottom',
-    scrub: 1.6,
+    scrub: 1.8,
   }
 });
 
-// Segment 0→0.12: Hero idle
-tl.to(scrollState, {
-  posX: 0, posY: 0, posZ: 0,
-  rotY: Math.PI * 0.3,
-  scale: 1,
-  cameraZ: 8,
-  duration: 0.12
-}, 0);
+/*  Beat map — orb alternates left/right opposite to text cards
+    Feature left = orb right, Feature right = orb left           */
 
-// Segment 0.12→0.28: Dive forward (Feature 1 - Personality: Text on Left)
-tl.to(scrollState, {
-  posX: 3.2,
-  posY: -0.3,
-  posZ: 1.2,
-  rotX: 0.2,
-  rotY: Math.PI * 0.7,
-  rotZ: -0.1,
-  scale: 0.85,
-  cameraZ: 7.2,
-  cameraY: -0.2,
-  particleOpacity: 0.7,
-  duration: 0.16
+// 0.00 → 0.12 : Hero — center
+masterTL.to(S, { posX: 0, posY: 0, posZ: 0, rotY: Math.PI * 0.25, scale: 1, camZ: 9, camY: 0, duration: 0.12 }, 0);
+
+// 0.12 → 0.28 : Feature 1 (text left) → orb moves right
+masterTL.to(S, {
+  posX: 3.4, posY: -0.4, posZ: 1.0,
+  rotX: 0.18, rotY: Math.PI * 0.85, rotZ: -0.12,
+  scale: 0.88, camZ: 7.5, camY: -0.3,
+  starOpacity: 0.6, duration: 0.16
 }, 0.12);
 
-// Segment 0.28→0.44: Sweep right (Feature 2 - Memory: Text on Right)
-tl.to(scrollState, {
-  posX: -3.2,
-  posY: -1.0,
-  posZ: 0.5,
-  rotX: -0.15,
-  rotY: Math.PI * 1.2,
-  rotZ: 0.15,
-  scale: 0.8,
-  cameraZ: 7.5,
-  cameraY: -0.8,
-  particleOpacity: 0.9,
-  glowOpacity: 0.07,
-  duration: 0.16
+// 0.28 → 0.44 : Feature 2 (text right) → orb moves left
+masterTL.to(S, {
+  posX: -3.4, posY: -1.2, posZ: 0.6,
+  rotX: -0.14, rotY: Math.PI * 1.45, rotZ: 0.14,
+  scale: 0.83, camZ: 7.8, camY: -1.0,
+  starOpacity: 0.75, glowOpacity: 0.06, duration: 0.16
 }, 0.28);
 
-// Segment 0.44→0.60: Dive deep left (Feature 3 - Multimodal: Text on Left)
-tl.to(scrollState, {
-  posX: 3.5,
-  posY: -2.2,
-  posZ: -0.5,
-  rotX: 0.3,
-  rotY: Math.PI * 1.9,
-  rotZ: -0.2,
-  scale: 0.75,
-  cameraZ: 8.5,
-  cameraY: -1.8,
-  particleOpacity: 1.0,
-  glowOpacity: 0.1,
-  duration: 0.16
+// 0.44 → 0.60 : Feature 3 (text left) → orb dives right-deep
+masterTL.to(S, {
+  posX: 3.6, posY: -2.6, posZ: -0.4,
+  rotX: 0.28, rotY: Math.PI * 2.1, rotZ: -0.18,
+  scale: 0.78, camZ: 8.8, camY: -2.2,
+  starOpacity: 0.9, glowOpacity: 0.09, duration: 0.16
 }, 0.44);
 
-// Segment 0.60→0.76: Rise right (Feature 4 - Platform: Text on Right)
-tl.to(scrollState, {
-  posX: -3.5,
-  posY: -3.5,
-  posZ: 0.8,
-  rotX: -0.1,
-  rotY: Math.PI * 2.6,
-  rotZ: 0.1,
-  scale: 0.75,
-  cameraZ: 8.0,
-  cameraY: -3.0,
-  particleOpacity: 0.8,
-  duration: 0.16
+// 0.60 → 0.76 : Feature 4 (text right) → orb sweeps left
+masterTL.to(S, {
+  posX: -3.8, posY: -4.0, posZ: 0.7,
+  rotX: -0.08, rotY: Math.PI * 2.85, rotZ: 0.12,
+  scale: 0.78, camZ: 8.2, camY: -3.5,
+  starOpacity: 0.85, duration: 0.16
 }, 0.60);
 
-// Segment 0.76→0.90: Stats
-tl.to(scrollState, {
-  posX: 0,
-  posY: -5.0,
-  posZ: 0,
-  rotX: 0,
-  rotY: Math.PI * 3.2,
-  rotZ: 0,
-  scale: 1.0,
-  cameraZ: 7.0,
-  cameraY: -4.5,
-  particleOpacity: 1.0,
-  glowOpacity: 0.12,
-  duration: 0.14
+// 0.76 → 0.90 : Stats — orb re-centers, breathes larger
+masterTL.to(S, {
+  posX: 0, posY: -5.8, posZ: 0,
+  rotX: 0, rotY: Math.PI * 3.5, rotZ: 0,
+  scale: 1.05, camZ: 7.2, camY: -5.2,
+  starOpacity: 1.0, glowOpacity: 0.13, duration: 0.14
 }, 0.76);
 
-// Segment 0.90→1.0: CTA
-tl.to(scrollState, {
-  posX: 0,
-  posY: -6.5,
-  posZ: 1.5,
-  rotX: 0,
-  rotY: Math.PI * 4.0,
-  rotZ: 0,
-  scale: 1.15,
-  cameraZ: 6.5,
-  cameraY: -6.0,
-  particleOpacity: 1.0,
-  glowOpacity: 0.18,
-  duration: 0.1
+// 0.90 → 1.0 : CTA — grand finale, surges forward
+masterTL.to(S, {
+  posX: 0, posY: -7.2, posZ: 1.8,
+  rotX: 0, rotY: Math.PI * 4.2, rotZ: 0,
+  scale: 1.18, camZ: 6.5, camY: -6.8,
+  starOpacity: 1.0, glowOpacity: 0.2, duration: 0.10
 }, 0.90);
 
-// ── 5. SECTION TEXT ANIMATIONS ───────────────
-gsap.timeline({ delay: 0.4 })
-  .to('#eyebrow',    { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' })
-  .to('#hero-title', { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out' }, '-=0.5')
-  .to('#hero-sub',   { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out' }, '-=0.6')
-  .to('#hero-cta',   { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.5')
-  .to('#scroll-hint',{ opacity: 1, duration: 1.0 }, '-=0.2');
+/* ═══════════════════════════════════════════════
+   5. TEXT / SECTION ANIMATIONS
+═══════════════════════════════════════════════ */
 
-function revealCard(id) {
-  gsap.to(id, {
-    scrollTrigger: { trigger: id, start: 'top 72%', toggleActions: 'play none none reverse' },
-    opacity: 1, x: 0, y: 0, duration: 1.1, ease: 'expo.out'
+// Hero entrance — staggered lines
+window.addEventListener('load', () => {
+  const tl = gsap.timeline({ delay: 0.3 });
+
+  tl.to('#hero-badge', {
+    opacity: 1, y: 0, duration: 0.8, ease: 'power3.out'
+  });
+
+  // Each title line slides up from clip
+  tl.to('.title-line', {
+    opacity: 1, y: '0%', duration: 1.1, stagger: 0.1, ease: 'expo.out'
+  }, '-=0.3');
+
+  tl.to('#hero-sub', {
+    opacity: 1, y: 0, duration: 0.9, ease: 'power3.out'
+  }, '-=0.5');
+
+  tl.to('#hero-email-bar', {
+    opacity: 1, y: 0, duration: 0.9, ease: 'power3.out'
+  }, '-=0.55');
+
+  tl.to('#hero-proof', {
+    opacity: 1, y: 0, duration: 0.8, ease: 'power3.out'
+  }, '-=0.5');
+
+  tl.to('#scroll-hint', {
+    opacity: 1, duration: 1.0
+  }, '-=0.3');
+});
+
+// Feature cards
+function animateCard(id, dir = 'left') {
+  const el = document.getElementById(id);
+  if (!el) return;
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 74%',
+    onEnter: () => gsap.to(el, {
+      opacity: 1, x: 0, y: 0, duration: 1.15, ease: 'expo.out'
+    }),
+    onLeaveBack: () => gsap.to(el, {
+      opacity: 0,
+      x: dir === 'left' ? -50 : 50,
+      duration: 0.55, ease: 'power2.in'
+    }),
   });
 }
-revealCard('#card-1');
-revealCard('#card-2');
-revealCard('#card-3');
-revealCard('#card-4');
+animateCard('card-1', 'left');
+animateCard('card-2', 'right');
+animateCard('card-3', 'left');
+animateCard('card-4', 'right');
 
-gsap.to('#chat-demo-1', {
-  scrollTrigger: { trigger: '#features', start: 'top 60%', toggleActions: 'play none none reverse' },
-  opacity: 1, y: 0, duration: 1.2, delay: 0.3, ease: 'power3.out'
+// Chat demo
+ScrollTrigger.create({
+  trigger: '#chat-demo-1',
+  start: 'top 72%',
+  onEnter: () => {
+    gsap.to('#chat-demo-1', {
+      opacity: 1, y: 0, scale: 1, duration: 1.0, ease: 'expo.out'
+    });
+  },
+  onLeaveBack: () => {
+    gsap.to('#chat-demo-1', { opacity: 0, y: 30, scale: 0.97, duration: 0.5, ease: 'power2.in' });
+  }
 });
 
-['#stat-1', '#stat-2', '#stat-3'].forEach((id, i) => {
-  gsap.to(id, {
-    scrollTrigger: { trigger: '#stats-section', start: 'top 70%', toggleActions: 'play none none reverse' },
-    opacity: 1, y: 0, duration: 0.9, delay: i * 0.12, ease: 'power3.out'
+// Memory demo
+ScrollTrigger.create({
+  trigger: '#memory-demo',
+  start: 'top 72%',
+  onEnter: () => {
+    gsap.to('#memory-demo', { opacity: 1, y: 0, scale: 1, duration: 1.0, ease: 'expo.out' });
+    // Start the memory entry animations
+    document.querySelectorAll('.memory-entry').forEach(el => {
+      el.style.animationPlayState = 'running';
+    });
+  },
+  onLeaveBack: () => {
+    gsap.to('#memory-demo', { opacity: 0, y: 30, scale: 0.97, duration: 0.5, ease: 'power2.in' });
+    document.querySelectorAll('.memory-entry').forEach(el => {
+      el.style.animationPlayState = 'paused';
+      el.style.opacity = 0;
+      el.style.transform = 'translateX(-10px)';
+    });
+  }
+});
+
+// Stats
+['stat-1','stat-2','stat-3'].forEach((id, i) => {
+  ScrollTrigger.create({
+    trigger: '#' + id,
+    start: 'top 78%',
+    onEnter: () => {
+      const el = document.getElementById(id);
+      gsap.to(el, { opacity: 1, y: 0, duration: 0.9, delay: i * 0.1, ease: 'power3.out',
+        onComplete: () => el.classList.add('revealed')
+      });
+    },
+    onLeaveBack: () => {
+      const el = document.getElementById(id);
+      gsap.to(el, { opacity: 0, y: 30, duration: 0.45, ease: 'power2.in' });
+      document.getElementById(id).classList.remove('revealed');
+    }
   });
 });
 
-const ctaTl = gsap.timeline({
-  scrollTrigger: { trigger: '#cta-section', start: 'top 65%', toggleActions: 'play none none reverse' }
+// CTA section
+ScrollTrigger.create({
+  trigger: '#cta-section',
+  start: 'top 68%',
+  onEnter: () => {
+    const t = gsap.timeline();
+    t.to('#cta-label',     { opacity: 1, duration: 0.7, ease: 'power2.out' })
+     .to('#cta-title',     { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out' }, '-=0.3')
+     .to('#cta-body',      { opacity: 1, duration: 0.8, ease: 'power2.out' }, '-=0.5')
+     .to('#cta-email-bar', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.45')
+     .to('#cta-proof',     { opacity: 1, duration: 0.7, ease: 'power2.out' }, '-=0.4')
+     .to('#cta-links',     { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.3');
+  }
 });
-ctaTl
-  .to('#cta-label',   { opacity: 1, duration: 0.7, ease: 'power2.out' })
-  .to('#cta-title',   { opacity: 1, y: 0, duration: 1.0, ease: 'expo.out' }, '-=0.3')
-  .to('#cta-body',    { opacity: 1, duration: 0.8, ease: 'power2.out' }, '-=0.5')
-  .to('#cta-buttons', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.4');
 
-// ── 6. RENDER LOOP ───────────────────────────
+/* ═══════════════════════════════════════════════
+   6. RENDER LOOP
+═══════════════════════════════════════════════ */
 let time = 0;
-let rafId;
+let mouseNX = 0, mouseNY = 0;
 
-function render() {
-  rafId = requestAnimationFrame(render);
+document.addEventListener('mousemove', e => {
+  mouseNX = (e.clientX / window.innerWidth  - 0.5) * 2;
+  mouseNY = (e.clientY / window.innerHeight - 0.5) * 2;
+}, { passive: true });
+
+// Track smooth mouse for camera
+let smX = 0, smY = 0;
+
+(function render() {
+  requestAnimationFrame(render);
   time += 0.01;
 
-  group.position.x = scrollState.posX + Math.sin(time * 0.4) * 0.04;
-  group.position.y = scrollState.posY + Math.sin(time * 0.3) * 0.03;
-  group.position.z = scrollState.posZ;
+  // Smooth mouse
+  smX += (mouseNX - smX) * 0.04;
+  smY += (mouseNY - smY) * 0.04;
 
-  group.rotation.x = scrollState.rotX + Math.sin(time * 0.25) * 0.02;
-  group.rotation.y = scrollState.rotY + time * 0.15 + mouseNX * 0.08;
-  group.rotation.z = scrollState.rotZ + Math.cos(time * 0.2) * 0.01;
+  // Apply scroll state + idle micro-animation
+  group.position.x = S.posX + Math.sin(time * 0.38) * 0.045;
+  group.position.y = S.posY + Math.sin(time * 0.29) * 0.035;
+  group.position.z = S.posZ;
 
-  group.scale.setScalar(scrollState.scale + Math.sin(time * 0.5) * 0.008);
+  group.rotation.x = S.rotX + Math.sin(time * 0.22) * 0.018 + smY * 0.06;
+  group.rotation.y = S.rotY + time * 0.14 + smX * 0.07;
+  group.rotation.z = S.rotZ + Math.cos(time * 0.18) * 0.012;
 
-  camera.position.z = scrollState.cameraZ;
-  camera.position.y = scrollState.cameraY + mouseNY * 0.12;
-  camera.position.x = mouseNX * 0.15;
+  group.scale.setScalar(S.scale + Math.sin(time * 0.48) * 0.007);
+
+  // Camera follows scroll + mouse parallax
+  camera.position.z = S.camZ;
+  camera.position.y = S.camY + smY * 0.14;
+  camera.position.x = smX * 0.18;
   camera.lookAt(
-    scrollState.posX * 0.2,
-    scrollState.posY + scrollState.cameraY * 0.5,
+    S.posX * 0.18 + smX * 0.05,
+    S.posY + S.camY * 0.5,
     0
   );
 
-  ring1.rotation.y += 0.003;
-  ring2.rotation.x += 0.002;
-  ring3.rotation.z += 0.0025;
+  // Ring rotation (independent axes = gyroscope feel)
+  ring1.rotation.y += 0.0028;
+  ring2.rotation.x += 0.0019;
+  ring3.rotation.z += 0.0023;
+  ring3.rotation.x -= 0.0008;
 
-  pointGlow.intensity = 2.5 + Math.sin(time * 1.2) * 0.6;
-  pointGlow.position.y = 2 + Math.sin(time * 0.5) * 0.5;
+  // Pulsing core glow
+  pointGlow.intensity  = 3.0 + Math.sin(time * 1.15) * 0.7;
+  pointGlow.position.y = 2 + Math.sin(time * 0.45) * 0.6;
+  pointGlow2.intensity = 1.5 + Math.cos(time * 0.8) * 0.4;
 
-  particleMat.opacity = scrollState.particleOpacity;
-  glowMat.opacity = scrollState.glowOpacity;
-
-  wireMat.opacity = 0.06 + Math.sin(time * 0.8) * 0.03;
+  // Material updates driven by scroll
+  starMat.opacity = S.starOpacity;
+  glowMat.opacity = S.glowOpacity;
+  wireMat.opacity = 0.05 + Math.sin(time * 0.75) * 0.025;
 
   renderer.render(scene, camera);
-}
-render();
+})();
 
-// ── 7. NAV SCROLL BEHAVIOR ───────────────────
+/* ═══════════════════════════════════════════════
+   7. NAV SCROLL BEHAVIOR
+═══════════════════════════════════════════════ */
 const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => {
-  if (window.scrollY > 60) {
-    nav.style.background = 'rgba(5,5,7,0.85)';
-    nav.style.backdropFilter = 'blur(12px)';
-    nav.style.borderBottom = '1px solid rgba(126,232,162,0.06)';
+  if (window.scrollY > 50) {
+    nav.style.background = 'rgba(5,5,7,0.8)';
+    nav.style.backdropFilter = 'blur(18px)';
+    nav.style.webkitBackdropFilter = 'blur(18px)';
+    nav.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
   } else {
     nav.style.background = 'transparent';
     nav.style.backdropFilter = 'none';
+    nav.style.webkitBackdropFilter = 'none';
     nav.style.borderBottom = 'none';
   }
+}, { passive: true });
+
+/* ═══════════════════════════════════════════════
+   8. INLINE EMAIL FORMS (Hero + CTA)
+═══════════════════════════════════════════════ */
+function validateEmail(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
+}
+
+function shakeEl(el) {
+  gsap.killTweensOf(el);
+  gsap.fromTo(el,
+    { x: 0 },
+    { x: 0, duration: 0.45, ease: 'elastic.out(1,0.4)',
+      keyframes: [
+        { x: -8, duration: 0.08 }, { x: 8, duration: 0.08 },
+        { x: -5, duration: 0.07 }, { x: 5, duration: 0.07 },
+        { x: 0,  duration: 0.15 }
+      ]
+    }
+  );
+  gsap.to(el, { borderColor: 'rgba(247,183,49,0.7)', duration: 0.2, yoyo: true, repeat: 3,
+    onComplete: () => gsap.set(el, { clearProps: 'borderColor' })
+  });
+}
+
+function showToast(email) {
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 5500);
+}
+
+document.getElementById('toast-close').addEventListener('click', () => {
+  document.getElementById('toast').classList.remove('show');
 });
 
-// ── 8. CLEANUP ──────────────────────────────
+async function submitEmail(email, source) {
+  try {
+    await db.collection('early_access').add({
+      email: email.trim(),
+      source: source,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    return true;
+  } catch (err) {
+    console.error('Firestore error:', err);
+    return false;
+  }
+}
+
+// Shared handler
+async function handleEmailBar(inputId, btnId, labelId, barId) {
+  const input = document.getElementById(inputId);
+  const btn   = document.getElementById(btnId);
+  const label = document.getElementById(labelId);
+  const bar   = document.getElementById(barId);
+  if (!input || !btn) return;
+
+  const email = input.value;
+
+  if (!validateEmail(email)) {
+    shakeEl(bar);
+    input.focus();
+    return;
+  }
+
+  // Loading state
+  label.textContent = 'Locking you in...';
+  btn.disabled = true;
+  gsap.to(btn, { opacity: 0.7, scale: 0.97, duration: 0.2 });
+
+  const ok = await submitEmail(email, inputId.includes('hero') ? 'hero' : 'cta');
+
+  if (ok) {
+    // Success micro-animation on the bar
+    gsap.to(bar, {
+      borderColor: 'rgba(126,232,162,0.5)',
+      boxShadow: '0 0 0 4px rgba(126,232,162,0.08), 0 0 40px rgba(126,232,162,0.15)',
+      duration: 0.35
+    });
+    gsap.to(btn, { background: '#7EE8A2', scale: 1, opacity: 1, duration: 0.3 });
+    label.textContent = '✓ You\'re in!';
+
+    setTimeout(() => {
+      showToast(email);
+      input.value = '';
+      label.textContent = inputId.includes('hero') ? 'Get Early Access' : 'Join Waitlist';
+      btn.disabled = false;
+      gsap.to(bar, { borderColor: 'rgba(255,255,255,0.1)', boxShadow: 'none', duration: 0.5 });
+      gsap.to(btn, { background: 'var(--accent)', duration: 0.4 });
+    }, 1800);
+
+  } else {
+    label.textContent = 'Try again →';
+    btn.disabled = false;
+    gsap.to(btn, { scale: 1, opacity: 1, duration: 0.2 });
+    shakeEl(btn);
+  }
+}
+
+// Hero bar
+document.getElementById('hero-join-btn').addEventListener('click', () => {
+  handleEmailBar('hero-email-input', 'hero-join-btn', 'hero-btn-label', 'hero-email-bar');
+});
+document.getElementById('hero-email-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleEmailBar('hero-email-input', 'hero-join-btn', 'hero-btn-label', 'hero-email-bar');
+});
+
+// CTA bar
+document.getElementById('cta-join-btn').addEventListener('click', () => {
+  handleEmailBar('cta-email-input', 'cta-join-btn', 'cta-btn-label', 'cta-email-bar');
+});
+document.getElementById('cta-email-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleEmailBar('cta-email-input', 'cta-join-btn', 'cta-btn-label', 'cta-email-bar');
+});
+
+/* ═══════════════════════════════════════════════
+   9. INPUT FOCUS — cursor expand
+═══════════════════════════════════════════════ */
+document.querySelectorAll('input').forEach(el => {
+  el.addEventListener('focus', () => {
+    gsap.to(cursor, { width: 4, height: 4, opacity: 0.4, duration: 0.2 });
+    gsap.to(ring, { width: 0, height: 0, opacity: 0, duration: 0.2 });
+  });
+  el.addEventListener('blur', () => {
+    gsap.to(cursor, { width: 8, height: 8, opacity: 1, duration: 0.2 });
+    gsap.to(ring, { width: 34, height: 34, opacity: 1, duration: 0.2 });
+  });
+});
+
+/* ═══════════════════════════════════════════════
+   10. CLEANUP
+═══════════════════════════════════════════════ */
 window.addEventListener('beforeunload', () => {
-  cancelAnimationFrame(rafId);
   renderer.dispose();
 });
-
-// ── 9. WAITLIST MODAL ────────────────────────
-(function() {
-  const overlay    = document.getElementById('modal-overlay');
-  const box        = document.getElementById('modal-box');
-  const backdrop   = document.getElementById('modal-backdrop');
-  const closeBtn   = document.getElementById('modal-close');
-  const submitBtn  = document.getElementById('modal-submit');
-  const formView   = document.getElementById('modal-form-view');
-  const successView= document.getElementById('modal-success');
-  const emailInput = document.getElementById('modal-email');
-  const nameInput  = document.getElementById('modal-name');
-  const successMsg = document.getElementById('success-message');
-  const submitLabel= document.getElementById('modal-submit-label');
-
-  // Trigger buttons
-  const triggers = [
-    document.getElementById('open-modal-btn'),
-  ].filter(Boolean);
-
-  function openModal() {
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-
-    gsap.to(overlay, { opacity: 1, duration: 0.35, ease: 'power2.out' });
-    gsap.to(box, {
-      opacity: 1, y: 0, scale: 1,
-      duration: 0.55,
-      ease: 'expo.out',
-      clearProps: 'transform'
-    });
-
-    // Subtle border glow pulse
-    gsap.to(box, {
-      boxShadow: '0 0 0 1px rgba(126,232,162,0.12), 0 40px 80px rgba(0,0,0,0.6), 0 0 80px rgba(126,232,162,0.12)',
-      duration: 1.2,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut'
-    });
-
-    // Stagger form fields in
-    gsap.fromTo(
-      '#modal-form-view > *',
-      { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, stagger: 0.07, duration: 0.5, delay: 0.2, ease: 'power3.out' }
-    );
-
-    setTimeout(() => emailInput.focus(), 400);
-  }
-
-  function closeModal() {
-    gsap.to(overlay, { opacity: 0, duration: 0.28, ease: 'power2.in', onComplete: () => {
-      overlay.classList.remove('active');
-      document.body.style.overflow = '';
-      // Reset for next open
-      gsap.set(box, { y: 40, scale: 0.96, opacity: 0 });
-      gsap.killTweensOf(box); // stop glow pulse
-    }});
-    gsap.to(box, { y: 24, scale: 0.97, opacity: 0, duration: 0.28, ease: 'power2.in' });
-  }
-
-  function showSuccess(name) {
-    const greeting = name ? `${name}, you're` : "You're";
-    successMsg.textContent = `${greeting} officially on the list. Zoro will reach out when it's ready to meet you.`;
-
-    gsap.to(formView, {
-      opacity: 0, y: -20, duration: 0.3, ease: 'power2.in',
-      onComplete: () => {
-        formView.style.display = 'none';
-        successView.style.display = 'flex';
-        gsap.fromTo(successView,
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.55, ease: 'expo.out' }
-        );
-        gsap.fromTo(
-          '#modal-success > *',
-          { opacity: 0, y: 14 },
-          { opacity: 1, y: 0, stagger: 0.09, duration: 0.5, delay: 0.1, ease: 'power3.out' }
-        );
-      }
-    });
-  }
-
-  function resetModal() {
-    formView.style.display = 'block';
-    successView.style.display = 'none';
-    gsap.set(formView, { opacity: 1, y: 0 });
-    emailInput.value = '';
-    nameInput.value = '';
-    submitLabel.textContent = 'Join Waitlist →';
-    submitBtn.disabled = false;
-  }
-
-  // Open triggers
-  triggers.forEach(btn => btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    resetModal();
-    openModal();
-  }));
-
-  // Close on backdrop click
-  backdrop.addEventListener('click', closeModal);
-
-  // Close on Escape
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
-  });
-
-  closeBtn.addEventListener('click', closeModal);
-
-  // Submit
-  submitBtn.addEventListener('click', () => {
-    const email = emailInput.value.trim();
-    const name  = nameInput.value.trim();
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      // Shake the email field
-      gsap.fromTo(emailInput,
-        { x: -8 },
-        { x: 0, duration: 0.4, ease: 'elastic.out(1,0.3)',
-          keyframes: [{ x: -8 }, { x: 8 }, { x: -5 }, { x: 5 }, { x: 0 }]
-        }
-      );
-      gsap.to(emailInput, {
-        borderColor: 'rgba(247,183,49,0.8)',
-        duration: 0.2,
-        yoyo: true,
-        repeat: 3,
-        onComplete: () => gsap.set(emailInput, { clearProps: 'borderColor' })
-      });
-      emailInput.focus();
-      return;
-    }
-
-    submitLabel.textContent = 'Locking you in...';
-    submitBtn.disabled = true;
-
-    // Save to Firebase Firestore
-    db.collection("early_access").add({
-      email: email,
-      name: name,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      source: 'landing_page'
-    })
-    .then(() => {
-      showSuccess(name);
-    })
-    .catch((error) => {
-      console.error("Error adding to waitlist: ", error);
-      submitLabel.textContent = 'Error. Try again?';
-      submitBtn.disabled = false;
-      
-      // Shake the button on error
-      gsap.fromTo(submitBtn, { x: -4 }, { x: 4, duration: 0.1, repeat: 5, yoyo: true });
-    });
-  });
-
-  // Cursor hover effects for modal elements
-  [submitBtn, closeBtn, emailInput, nameInput].forEach(el => {
-    if(!el) return;
-    el.addEventListener('mouseenter', () => {
-      cursor.style.width = '16px'; cursor.style.height = '16px';
-      ring.style.width = '54px'; ring.style.height = '54px';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.width = '10px'; cursor.style.height = '10px';
-      ring.style.width = '36px'; ring.style.height = '36px';
-    });
-  });
-})();

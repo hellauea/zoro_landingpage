@@ -1,31 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zoro AI — Your Witty AI Friend</title>
-
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap"
-    rel="stylesheet" />
-
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-  <!-- Cursor -->
   <div id="cursor"></div>
   <div id="cursor-ring"></div>
-
-  <!-- Progress -->
   <div id="progress-bar"></div>
-
-  <!-- Overlays -->
   <div id="noise"></div>
   <div id="vignette"></div>
 
@@ -35,7 +23,7 @@
     <ul class="nav-links">
       <li><a href="#features">Features</a></li>
       <li><a href="#memory">Memory</a></li>
-      <li><a href="#cta-section">Get Access</a></li>
+      <li><a href="#cta-section" class="nav-cta">Get Access</a></li>
     </ul>
   </nav>
 
@@ -47,34 +35,64 @@
   <!-- Scroll Content -->
   <div id="scroll-container">
 
-    <!-- HERO -->
+    <!-- ═══ HERO ═══ -->
     <section id="hero">
-      <div class="hero-eyebrow" id="eyebrow">Personality-first AI · Built different</div>
-      <h1 class="hero-title" id="hero-title">ZORO</h1>
-      <p class="hero-sub" id="hero-sub">
-        Not your corporate chatbot.<br />
-        <span>Chill. Sarcastic. Yours.</span> An AI that actually talks like a person.
-      </p>
-      <div style="display: flex; flex-direction: column; align-items: center; margin-top: 1rem;">
-        <a class="hero-cta" id="hero-cta" href="https://zoro-ai-3zhq.onrender.com">
-          <span>Meet Zoro</span>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"
-              stroke-linejoin="round" />
-          </svg>
-        </a>
+      <div class="hero-inner">
+
+        <div class="hero-badge" id="hero-badge">
+          <span class="badge-dot"></span>
+          <span>Beta launching soon</span>
+        </div>
+
+        <h1 class="hero-title" id="hero-title">
+          <span class="title-line" data-line="1">NOT YOUR</span>
+          <span class="title-line accent-line" data-line="2">CORPORATE</span>
+          <span class="title-line" data-line="3">CHATBOT.</span>
+        </h1>
+
+        <p class="hero-sub" id="hero-sub">
+          Meet <strong>Zoro AI</strong> — chill, sarcastic, and actually remembers who you are.<br/>
+          Powered by Llama 3.3 70B on Groq. Your personality-first AI friend.
+        </p>
+
+        <!-- Inline email bar — reference style -->
+        <div class="hero-email-bar" id="hero-email-bar">
+          <input type="email" id="hero-email-input" placeholder="Enter your email" autocomplete="off" />
+          <button id="hero-join-btn" class="hero-join-btn">
+            <span id="hero-btn-label">Get Early Access</span>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Social proof row -->
+        <div class="hero-proof" id="hero-proof">
+          <div class="proof-avatars">
+            <span class="av" style="background:linear-gradient(135deg,#7EE8A2,#3ab870)">P</span>
+            <span class="av" style="background:linear-gradient(135deg,#5BC0F8,#2a8fd4)">A</span>
+            <span class="av" style="background:linear-gradient(135deg,#F7B731,#e09000)">S</span>
+            <span class="av" style="background:linear-gradient(135deg,#c084fc,#8b5cf6)">K</span>
+            <span class="av" style="background:rgba(255,255,255,0.08); border:1px dashed rgba(255,255,255,0.2); font-size:0.6rem;">+</span>
+          </div>
+          <p class="proof-text">
+            Join <strong>420+</strong> people on the waitlist
+          </p>
+        </div>
+
       </div>
+
       <div class="scroll-hint" id="scroll-hint">
         <div class="scroll-line"></div>
         <span>Scroll</span>
       </div>
     </section>
 
-    <!-- FEATURE 1 — Personality -->
+    <!-- ═══ FEATURE 1 — Personality ═══ -->
     <section class="feature-section left" id="features">
       <div class="feature-card" id="card-1">
         <div class="feature-number">01 — Personality Engine</div>
-        <h2 class="feature-title">Not "Certainly!"<br />Just <em>real</em> talk.</h2>
+        <h2 class="feature-title">Not "Certainly!"<br/>Just <em>real</em> talk.</h2>
         <p class="feature-body">
           Zoro skips the corporate script. No hollow affirmations, no robotic cadence.
           It replies like a <strong>friend texting back</strong> — dry humor included, free of charge.
@@ -87,22 +105,31 @@
         </div>
       </div>
 
-      <!-- Chat Demo -->
       <div class="chat-demo" id="chat-demo-1">
+        <div class="chat-header">
+          <span class="chat-dot green"></span>
+          <span class="chat-dot yellow"></span>
+          <span class="chat-dot red"></span>
+          <span class="chat-title">zoro.ai</span>
+        </div>
         <div class="bubble user">write me a poem about mondays</div>
         <div class="bubble ai">
           <div class="bubble-name">Zoro</div>
-          Monday's the villain nobody asked for. Coffee exists solely because of it. You're not lazy — you're just
-          putting up appropriate resistance.
+          Monday's the villain nobody asked for. Coffee exists solely because of it. You're not lazy — you're just putting up appropriate resistance.
+        </div>
+        <div class="bubble user">lmao that's actually accurate</div>
+        <div class="bubble ai typing">
+          <div class="bubble-name">Zoro</div>
+          <span class="typing-dots"><span></span><span></span><span></span></span>
         </div>
       </div>
     </section>
 
-    <!-- FEATURE 2 — Memory -->
+    <!-- ═══ FEATURE 2 — Memory ═══ -->
     <section class="feature-section right" id="memory">
-      <div class="feature-card" id="card-2" style="transform: translateX(60px);">
+      <div class="feature-card" id="card-2">
         <div class="feature-number">02 — Memory Engine</div>
-        <h2 class="feature-title">It <em>remembers</em><br />who you are.</h2>
+        <h2 class="feature-title">It <em>remembers</em><br/>who you are.</h2>
         <p class="feature-body">
           As you chat, Zoro quietly extracts personal facts — your name, job, quirks, preferences — and stores them.
           Next time you open it? It already <strong>knows your context</strong>.
@@ -114,17 +141,32 @@
           <span class="tag">Persistent context</span>
         </div>
       </div>
+
+      <div class="memory-demo" id="memory-demo">
+        <div class="memory-header">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="var(--accent)" stroke-width="1.5"/><path d="M12 8v4l3 3" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>Memory Log</span>
+          <span class="memory-live">live</span>
+        </div>
+        <div class="memory-entries">
+          <div class="memory-entry" style="--d:0s"><span class="mem-key">name</span><span class="mem-val">"Aditya"</span></div>
+          <div class="memory-entry" style="--d:0.1s"><span class="mem-key">job</span><span class="mem-val">"CS student"</span></div>
+          <div class="memory-entry" style="--d:0.2s"><span class="mem-key">vibe</span><span class="mem-val">"night owl, roast enjoyer"</span></div>
+          <div class="memory-entry" style="--d:0.3s"><span class="mem-key">hates</span><span class="mem-val">"Mondays, obviously"</span></div>
+          <div class="memory-entry new" style="--d:0.4s"><span class="mem-key">building</span><span class="mem-val">"Zoro AI 🚀"</span></div>
+        </div>
+      </div>
     </section>
 
-    <!-- FEATURE 3 — Multimodal -->
+    <!-- ═══ FEATURE 3 — Multimodal ═══ -->
     <section class="feature-section left" id="vision">
       <div class="feature-card" id="card-3">
         <div class="feature-number">03 — Multimodal Brain</div>
         <h2 class="feature-title">See. Hear. <em>Read.</em></h2>
         <p class="feature-body">
-          Drop an image and Zoro sees it via <strong>Llama 4 Scout</strong>. Upload a PDF and it reads the whole thing
+          Drop an image and Zoro sees it via <strong>Llama 4 Scout</strong>. Upload a PDF and it reads everything
           via <strong>MarkItDown</strong>.
-          Ask it to search the web and DuckDuckGo handles real-time retrieval — no hallucinated answers.
+          Ask it to search and DuckDuckGo handles real-time retrieval — no hallucinated answers.
           Voice replies via <strong>ElevenLabs</strong> make it feel almost uncomfortably human.
         </p>
         <div class="feature-tags">
@@ -136,11 +178,11 @@
       </div>
     </section>
 
-    <!-- FEATURE 4 — Cross-Platform -->
+    <!-- ═══ FEATURE 4 — Cross-Platform ═══ -->
     <section class="feature-section right" id="platform">
-      <div class="feature-card" id="card-4" style="transform: translateX(60px);">
+      <div class="feature-card" id="card-4">
         <div class="feature-number">04 — Everywhere You Are</div>
-        <h2 class="feature-title">Web. Mobile.<br /><em>Native feel.</em></h2>
+        <h2 class="feature-title">Web. Mobile.<br/><em>Native feel.</em></h2>
         <p class="feature-body">
           Built on <strong>React + TypeScript</strong> with Tailwind and shadcn-ui for the web.
           Packaged as a genuine Android app via <strong>Capacitor</strong> — not a webview afterthought.
@@ -155,102 +197,90 @@
       </div>
     </section>
 
-    <!-- STATS -->
+    <!-- ═══ STATS ═══ -->
     <section id="stats-section">
       <div class="stats-grid">
         <div class="stat-item" id="stat-1">
-          <div class="stat-num">70B</div>
+          <div class="stat-num" data-target="70">0</div>
+          <div class="stat-unit">B</div>
           <div class="stat-label">Parameter Model</div>
         </div>
         <div class="stat-item" id="stat-2">
-          <div class="stat-num">&lt;1s</div>
+          <div class="stat-num">&lt;1</div>
+          <div class="stat-unit">s</div>
           <div class="stat-label">Groq Response Time</div>
         </div>
         <div class="stat-item" id="stat-3">
           <div class="stat-num">∞</div>
+          <div class="stat-unit"></div>
           <div class="stat-label">Memory Contexts</div>
         </div>
       </div>
     </section>
 
-    <!-- FINAL CTA -->
+    <!-- ═══ FINAL CTA ═══ -->
     <section id="cta-section">
-      <div class="cta-label" id="cta-label">The AI that gets you</div>
-      <h2 class="cta-title" id="cta-title">Ready to meet<br /><span>Zoro?</span></h2>
-      <p class="cta-body" id="cta-body">
-        Stop talking to a corporate bot. Start talking to an AI that actually has a personality — and remembers yours.
-      </p>
-      <div class="cta-buttons" id="cta-buttons">
-        <button class="btn-primary" id="open-modal-btn">Get Early Access</button>
-        <button class="btn-ghost">View on GitHub</button>
+      <div class="cta-inner">
+        <div class="cta-label" id="cta-label">The AI that gets you</div>
+        <h2 class="cta-title" id="cta-title">Stop talking to<br/>a bot. Talk to<br/><span>Zoro.</span></h2>
+        <p class="cta-body" id="cta-body">
+          Fast. Sarcastic. Remembers everything.<br/>Your AI friend is one click away.
+        </p>
+
+        <!-- Inline CTA bar — same as hero -->
+        <div class="cta-email-bar" id="cta-email-bar">
+          <input type="email" id="cta-email-input" placeholder="your@email.com" autocomplete="off" />
+          <button id="cta-join-btn" class="cta-join-btn">
+            <span id="cta-btn-label">Join Waitlist</span>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="cta-proof" id="cta-proof">
+          <div class="proof-avatars">
+            <span class="av" style="background:linear-gradient(135deg,#7EE8A2,#3ab870)">P</span>
+            <span class="av" style="background:linear-gradient(135deg,#5BC0F8,#2a8fd4)">A</span>
+            <span class="av" style="background:linear-gradient(135deg,#F7B731,#e09000)">S</span>
+          </div>
+          <p class="proof-text">Join <strong>420+</strong> on the waitlist</p>
+        </div>
+
+        <div class="cta-links" id="cta-links">
+          <a href="https://zoro-ai-3zhq.onrender.com" target="_blank" class="link-chip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="15,3 21,3 21,9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="10" y1="14" x2="21" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Live Demo
+          </a>
+          <a href="#" class="link-chip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            GitHub
+          </a>
+        </div>
       </div>
     </section>
 
   </div>
 
-  <!-- Waitlist Modal -->
-  <div id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title-text">
-    <div id="modal-backdrop"></div>
-    <div id="modal-box">
-      <button id="modal-close" aria-label="Close">&times;</button>
-
-      <!-- Form view -->
-      <div id="modal-form-view">
-        <div class="modal-badge">
-          <div class="modal-badge-dot"></div>
-          Early Access
-        </div>
-        <h2 class="modal-title" id="modal-title-text">
-          Be the first to<br/>try <em>Zoro AI</em>
-        </h2>
-        <p class="modal-sub">Join the waitlist. We'll ping you the moment the gates open.</p>
-
-        <div class="modal-field">
-          <input type="text" id="modal-name" placeholder="What should Zoro call you?" autocomplete="off" />
-        </div>
-        <div class="modal-field">
-          <input type="email" id="modal-email" placeholder="your@email.com" autocomplete="off" />
-        </div>
-
-        <button id="modal-submit">
-          <span id="modal-submit-label">Join Waitlist →</span>
-        </button>
-
-        <div class="modal-proof">
-          <div class="modal-avatars">
-            <span style="background:#7EE8A2; color:#050507; font-weight:bold;">P</span>
-            <span style="background:#5BC0F8; color:#050507; font-weight:bold;">A</span>
-            <span style="background:#F7B731; color:#050507; font-weight:bold;">S</span>
-            <span style="border-style:dashed; opacity:0.5;">+</span>
-          </div>
-          <p class="modal-proof-text">
-            Join <strong>420+</strong> others waiting for<br/>Zoro's unique personality.
-          </p>
-        </div>
-      </div>
-
-      <!-- Success view -->
-      <div id="modal-success" style="display:none; flex-direction:column; align-items:center; text-align:center;">
-        <div class="success-ring" style="width:60px; height:60px; border-radius:50%; border:1px solid var(--accent); display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:1rem;">🚀</div>
-        <div class="success-title" style="font-family:'Syne',sans-serif; font-size:1.7rem; font-weight:800; color:#fff; margin-bottom:0.5rem;">You're <span>in.</span></div>
-        <p class="success-sub" id="success-message" style="font-size:0.75rem; color:rgba(255,255,255,0.4); line-height:1.6; margin-bottom:1.5rem;">
-          We've got your spot locked. Zoro will reach out when it's time.
-        </p>
-        <div class="success-pill" style="display:inline-flex; align-items:center; background:rgba(126,232,162,0.1); border:1px solid var(--accent); border-radius:999px; padding:0.3rem 0.8rem; font-size:0.6rem; letter-spacing:0.1em; color:var(--accent);">// waitlist confirmed</div>
-      </div>
+  <!-- ═══ SUCCESS TOAST ═══ -->
+  <div id="toast">
+    <div class="toast-icon">🚀</div>
+    <div class="toast-content">
+      <div class="toast-title">You're on the list.</div>
+      <div class="toast-sub">Zoro will reach out when the gates open.</div>
     </div>
+    <button id="toast-close">×</button>
   </div>
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-  <!-- Three.js + GSAP via CDN -->
+  <!-- Three.js + GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
   <script src="script.js"></script>
 </body>
-
 </html>
